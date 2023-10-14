@@ -5,18 +5,113 @@
     <meta charset="UTF-8">
     <title>Sign Up</title>
     <link rel="stylesheet" href="css/signup.css">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+<style>
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #E8EDEC;
+}
+
+p.username {
+    color: black;
+    position: absolute;
+    top: 9.5vw;
+    left: 33vw;
+    font-size: 160%;
+    font-weight: bold;
+    z-index: 1;
+}
+
+p.email {
+    color: black;
+    position: absolute;
+    top: 17.5vw;
+    left: 33vw;
+    font-size: 160%;
+    font-weight: bold;
+    z-index: 1;
+}
+
+p.password {
+    color: black;
+    position: absolute;
+    top: 25.5vw;
+    left: 33vw;
+    font-size: 160%;
+    font-weight: bold;
+    z-index: 1;
+}
+
+.rcorners1 {
+  border-radius: 25px;
+  background: #D9D9D9;
+  padding: 12vw;
+  width: 16vw;
+  height: 8vw;
+  position: relative;
+  left: 375px;
+  top: 100px;
+  z-index: -1;
+}
+
+.style {
+    border-radius: 15px;
+    position: absolute;
+    width: 33%;
+    height: 3vw;
+    top: 15vw;
+    left: 15%;
+    border: none;
+}
+
+.move1 {
+    top: 180px;
+    left: 420px;
+}
+
+.move2 {
+    top: 280px;
+    left: 420px;
+}
+
+.move3 {
+    top: 380px;
+    left: 420px;
+}
+
+.coloredbutton {
+    background-color: #9730DB;
+    border-radius: 15px;
+    width: 180px;
+    font-size: 140%;
+    position: absolute;
+    left: 540px;
+    border: none;
+}
+
+.moveline {
+    position: absolute;
+    left: 510px;
+    top: 470px;
+}
+
+</style>
 </head>
 <body>
     <div class="container">
         <div class="signup">
-            <h1>Sign Up</h1>
+            <!-- <h1 class="center">Sign Up</h1> -->
             <form action="http://127.0.0.1:8001/signup/" method="post">
-                <input type="text" name="username" placeholder="Username" required>
-                <input type="email" name="email" placeholder="Email" required>
-                <input type="password" name="password" placeholder="Password" required>
-                <input type="submit" value="Sign Up">
+                <h2 class="rcorners1"></h2>
+                <p class="username">Username:</p>
+                <input type="text" class="style move1" name="username" placeholder="Username" required>
+                <p class="email">Email:</p>
+                <input type="email" class="style move2" name="email" placeholder="Email" required>
+                <p class="password">Password:</p>
+                <input type="password" class="style move3" name="password" placeholder="Password" required>
+                <input type="submit" class="coloredbutton" value="Sign Up">
             </form>
-            <p>Already have an account? <a href="/static/login.html">Log In</a></p>
+            <p class="moveline">Already have an account? <a href="/static/login.html">Log In</a></p>
         </div>
     </div>
 </body>
