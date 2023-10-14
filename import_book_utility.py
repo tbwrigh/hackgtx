@@ -25,7 +25,9 @@ description = "No description available."
 genre = "No genre available."
 
 # extract number
-book_id = gutenburg_url.split("/")[-1][0]
+book_id = gutenburg_url.split("/")[-1]
+
+print(book_id)
 
 # get the cover
 cover_url = f"https://www.gutenberg.org/cache/epub/{book_id}/pg{book_id}.cover.medium.jpg"
