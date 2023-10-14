@@ -44,7 +44,26 @@ def gptNaturalSplit(text_chunk: str, chunk_word_count: int) -> List[str]:
     return sections[:-1]
 
 def genArt(text_chunk:str) -> bytes:
-    return
+    messages = [
+        {
+            "role": "system",
+            "content": f"You are to write a description of any given passage that could be translated to a visual piece of art."
+        }
+    ]
+    messages.append({
+        "role": "user",
+        "content": text_chunk
+    })
+    chat = openai.CreateCompletion.create(model="gpt-3.5-turbo", messages=messages, max_tokens=1000)
+    output = chat.choices[0].message.content
+    response = openai.Image.create(
+        prompt = output, 
+        n = 1,
+        size = "1024x1024",
+    )
+    img_url = response['data'][0]['url']
+    r = requests.get(img_url, allow_redirects = True)
+    return r.content
 
 app = FastAPI()
 
