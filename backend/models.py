@@ -1,5 +1,6 @@
 import uuid
 from pydantic import BaseModel, Field
+from fastapi import UploadFile, Form
 
 class Book(BaseModel):
     book_id: str = Field(default_factory=uuid.uuid4, alias="_id")
@@ -7,14 +8,22 @@ class Book(BaseModel):
     author: str = Field(...)
     description: str = Field(...)
     genre: str = Field(...)
-    cover_img: str = Field(...)
-    text_path: str = Field(...)
+
+class BookUpload(BaseModel):
+    title: str = Form(...)
+    author: str = Form(...)
+    description: str = Form(...)
+    genre: str = Form(...)
+    user_id: str = Form(...)
+    cover_bytes: UploadFile
+    text_bytes: UploadFile
 
 class User(BaseModel):
     user_id: str = Field(default_factory=uuid.uuid4, alias="_id")
     username: str = Field(...)
     email: str = Field(...)
     password_hash: str = Field(...)
+    admin: bool = Field(...)
 
 class Section(BaseModel):
     section_id: str = Field(default_factory=uuid.uuid4, alias="_id")
