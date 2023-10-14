@@ -1,4 +1,5 @@
-from fastapi import FastAPI
+from typing import Annotated
+from fastapi import FastAPI, Form
 
 import dotenv
 import os
@@ -29,3 +30,10 @@ def get_section(section_id: str) -> Section:
     section = section_db['sections'].find_one({"section_id": section_id})
     return section
 
+@app.post("/login/")
+def login(username: Annotated[str, Form()], password: Annotated[str, Form()]):
+    res = user_db.find({"username": username, "password": password})
+    if len(res) == 1:
+        return True
+    else:
+        return False
