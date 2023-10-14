@@ -39,7 +39,7 @@ def get_section(section_id: str) -> Section:
 def login(username: Annotated[str, Form()], password: Annotated[str, Form()]):
     res = user_col.find({"username": username, "password": password})
     if len(res) == 1:
-        return True
+        return res.user_id
     else:
         return False
 
@@ -64,8 +64,9 @@ def upload_book(title: Annotated[str, Form()], author: Annotated[str, Form()], d
 
 @app.post("/signup/")
 def signup(email: Annotated[str, Form()], username: Annotated[str, Form()], password: Annotated[str, Form()]):
-    info = user_col.get({"email": email, "username": username, "password": password})
-    return info
+    user = User(username = username, email = email, password_hash = password, admin = False)
+    user_col.insert_one(user)
+    return user.user_id
 
 @app.get("/start_read/")
 def start_read(book_id: str, user_id: str) -> Section:
