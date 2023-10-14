@@ -9,7 +9,7 @@ body {
     font-family: 'Inter', sans-serif;
     background-color: #E8EDEC;
 }
-head {
+h2 {
     color: #9730DB;
     font-size: 160%;
     font-weight: bold;
@@ -20,5 +20,15 @@ head {
     {% for book in books %}
         <img src="http://127.0.0.1:8001/get_book_image/{{ book['book_id'] }}">
     {% endfor %}
+    {% for genre in genres %}
+    <h2>{{ genre }}</h2>
+        {% for book in books %}
+            {% if book[genre] == genre %}
+                <img src="http://127.0.0.1:8001/get_book_image/{{ book['genre'] }}">
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+
+    
 </body>
 </html>

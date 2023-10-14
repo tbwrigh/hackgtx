@@ -20,13 +20,15 @@ async def root():
 @app.get("/home")
 async def root(request: Request):
     books_req = requests.get("http://localhost:8001/get_books/")
+    genres_req = requests.get("http://localhost:8001/get_genres/")
 
 
     print("!!!!!!!!!!!!!!!!!!")
     print(books_req.content)
 
     books = books_req.json()
+    genres = genres_req.json()
 
     print(books)
 
-    return templates.TemplateResponse("home.html", {"request": request, "books": books})
+    return templates.TemplateResponse("home.html", {"request": request, "books": books, "genres": genres})
