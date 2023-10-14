@@ -6,7 +6,11 @@ import os
 import openai 
 from pymongo import MongoClient
 
-from models import User, Book, Section, Current, BookUpload
+from models import User, Book, Section, Current
+
+from PIL import Image
+import io
+
 
 dotenv.load_dotenv()
 
@@ -110,12 +114,37 @@ def start_read(book_id: str, user_id: str) -> Section:
     book = book_col.find_one({"book_id": book_id})
 
     # make the sections here
+    with open(f"{TEXT_FOLDER}/{book_id}.txt", "r") as f:
+        text = f.read()
+    
+    init_para = text[:1800]
 
-    # section = Section(book_id=book_id, user_id=user_id, start=0, end=0, img_path=f"{IMAGES_FOLDER}/{book_id}.jpg")
-    # section_db['sections'].insert_one(section)
+    text_sections = gptNaturalSplit(init_para, 60)
 
-    # return the first section
-    # return section
+    sections = []
+
+    dist_count = 0
+    for i in range(len(text_sections)):
+        old = dist_count
+        dist_count+=len(text_sections[i])
+        section = Section(book_id=book_id, user_id=user_id, start=old, end=dist_count)
+        section_col.insert_one(section)
+        sections.append(section.section_id)
+
+        image_data = genArt(text_sections[i])
+        image_stream = io.BytesIO(image_data)
+        image = Image.open(image_stream)
+        image.save(f"{IMAGES_FOLDER}/{section.section_id}.jpg",  optimize=True, quality=10)
+
+    return sections[0].section_id
+
+@app.get("/section_text/{section_id}")
+def get_section_text(section_id: str) -> str:
+    section = section_col.find_one({"section_id": section_id})
+    book = book_col.find_one({"book_id": section.book_id})
+    with open(f"{TEXT_FOLDER}/{book.book_id}.txt", "r") as f:
+        text = f.read()
+    return text[section.start:section.end]
 
 @app.get("/get_current/")
 def get_current(user_id: str) -> List[Current]:

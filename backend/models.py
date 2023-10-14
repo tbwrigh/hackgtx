@@ -23,7 +23,6 @@ class Section(BaseModel):
     user_id: str = Field(...)
     start: int = Field(...)
     end: int = Field(...)
-    img_path: str = Field(...)
 
 class Current(BaseModel):
     user_id: str = Field(...)
