@@ -1,5 +1,5 @@
 from typing import Annotated, List
-from fastapi import FastAPI, Form, File
+from fastapi import FastAPI, Form, File, UploadFile
 
 import dotenv
 import os
@@ -71,34 +71,36 @@ def genArt(text_chunk:str) -> bytes:
 
 app = FastAPI()
 
-@app.get("/sectiond/{section_id}")
+@app.get("/section/{section_id}")
 def get_section(section_id: str) -> Section:
     section = section_col.find_one({"section_id": section_id})
     return section
 
 @app.post("/login/")
 def login(username: Annotated[str, Form()], password: Annotated[str, Form()]):
-    res = user_col.find({"username": username, "password": password})
+    res = list(user_col.find({"username": username, "password_hash": password}))
+    print(res)
     if len(res) == 1:
-        return res.user_id
+        return res[0]['user_id']
     else:
         return False
 
 @app.post("/upload_book/")
-def upload_book(title: Annotated[str, Form()], author: Annotated[str, Form()], description: Annotated[str, Form()], genre: Annotated[str, Form()], user_id: Annotated[str, Form()], cover_bytes: Annotated[bytes, File()], text_bytes: Annotated[bytes, File()]):
+def upload_book(title: Annotated[str, Form()], author: Annotated[str, Form()], description: Annotated[str, Form()], genre: Annotated[str, Form()], user_id: Annotated[str, Form()], cover_bytes: UploadFile, text_bytes: UploadFile):
     user = user_col.find_one({"user_id": user_id})
-    if user.admin:
+    print(user)
+    if user['admin']:
         # write cover bytes to file
         book = Book(title=title, author=author, description=description, genre=genre)
 
         with open(f"{IMAGES_FOLDER}/{book.book_id}.jpg", "wb") as f:
-            f.write(cover_bytes)
+            f.write(cover_bytes.file.read())
         
         # write text bytes to file
         with open(f"{TEXT_FOLDER}/{book.book_id}.txt", "wb") as f:
-            f.write(text_bytes)
+            f.write(text_bytes.file.read())
 
-        book_col.insert_one(book)
+        book_col.insert_one(book.dict())
         return True
     else:
         return False
@@ -111,8 +113,6 @@ def signup(email: Annotated[str, Form()], username: Annotated[str, Form()], pass
 
 @app.get("/start_read/")
 def start_read(book_id: str, user_id: str) -> Section:
-    book = book_col.find_one({"book_id": book_id})
-
     # make the sections here
     with open(f"{TEXT_FOLDER}/{book_id}.txt", "r") as f:
         text = f.read()
@@ -136,13 +136,16 @@ def start_read(book_id: str, user_id: str) -> Section:
         image = Image.open(image_stream)
         image.save(f"{IMAGES_FOLDER}/{section.section_id}.jpg",  optimize=True, quality=10)
 
+    current = Current(user_id=user_id, book_id=book_id, section_id=sections[0].section_id)
+    currentread_col.insert_one(current.dict())
+
     return sections[0].section_id
 
 @app.get("/section_text/{section_id}")
 def get_section_text(section_id: str) -> str:
     section = section_col.find_one({"section_id": section_id})
-    book = book_col.find_one({"book_id": section.book_id})
-    with open(f"{TEXT_FOLDER}/{book.book_id}.txt", "r") as f:
+    book = book_col.find_one({"book_id": section['book_id']})
+    with open(f"{TEXT_FOLDER}/{book['book_id']}.txt", "r") as f:
         text = f.read()
     return text[section.start:section.end]
 
