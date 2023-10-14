@@ -24,9 +24,27 @@ currentread_col = db['reads']
 book_col = db['books']
 section_col = db['sections']
 
-
 IMAGES_FOLDER = os.getenv("IMAGES_FOLDER")
 TEXT_FOLDER = os.getenv("TEXT_FOLDER")
+
+def gptNaturalSplit(text_chunk: str, chunk_word_count: int) -> List[str]:
+    messages = [
+        {
+            "role": "system",
+            "content": f"You are to split the text into sections. Each section should be about {chunk_word_count} words long. Indicate splits putting a | character in between sections."
+        }
+    ]
+    messages.append({
+        "role": "user",
+        "content": text_chunk
+    })
+    chat = openai.CreateCompletion.create(model="gpt-3.5-turbo", messages=messages, max_tokens=1000)
+    output = chat.choices[0].message.content
+    sections = output.split("|")
+    return sections[:-1]
+
+def genArt(text_chunk:str) -> bytes:
+    return
 
 app = FastAPI()
 
