@@ -3,28 +3,40 @@
 <head>
 <style>
 a {
-    color: purple;
+    color: black;
     position: absolute;
     top: 200px;
     left: 420px;
     font-size: 180%;
+    font-weight: bold;
     z-index: 1;
 }
 
 b {
-    color: blue;
+    color: black;
     position: absolute;
     top: 280px;
     left: 420px;
     font-size: 180%;
+    font-weight: bold;
 }
 
 c {
-    color: orange;
+    color: white;
     position: absolute;
-    top: 340px;
-    left: 430px;
+    top: 357px;
+    left: 593px;
     font-size: 180%;
+    font-weight: bold;
+}
+
+d {
+    color: #9730DB;
+    position: absolute;
+    top: 400px;
+    left: 587px;
+    font-size: 160%;
+    font-weight: bold;
 }
 
 input[type=text] {
@@ -32,6 +44,16 @@ input[type=text] {
     border: none;
     position: absolute;
     top: 240px;
+    left: 420px;
+    width: 33%;
+    height: 30px;
+}
+
+.input2 {
+    border-radius: 25px;
+    border: none;
+    position: absolute;
+    top: 320px;
     left: 420px;
     width: 33%;
     height: 30px;
@@ -56,7 +78,7 @@ input[type=text] {
   width: 180px;
   height: 10px;
   position: absolute;
-  top: 370px;
+  top: 340px;
   left: 530px;
   z-index: -1;
 }
@@ -68,8 +90,10 @@ input[type=text] {
 <a>Username:</a>
 <input type="text">
 <b>Password:</b>
+<input type="text" class="input2">
 <h2 class="rcorners1"></h2>
-<h2 class="rcorners2">Login</h2>
-<h3>Sign Up</h3>
+<h2 class="rcorners2"></h2>
+<c>Login</c>
+<d>Sign Up</d>
 </body>
 </html>
