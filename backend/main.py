@@ -15,8 +15,10 @@ mongo_url = os.getenv("MONGO_URL")
 
 client = MongoClient(mongo_url)
 
-user_db = client.users
-
+user_db = client['users']
+currentread_db = client['reads']
+book_db = client['books']
+section_db = client['sections']
 
 
 app = FastAPI()
