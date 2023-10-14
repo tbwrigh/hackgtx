@@ -106,7 +106,7 @@ def upload_book(title: Annotated[str, Form()], author: Annotated[str, Form()], d
 @app.post("/signup/")
 def signup(email: Annotated[str, Form()], username: Annotated[str, Form()], password: Annotated[str, Form()]):
     user = User(username = username, email = email, password_hash = password, admin = False)
-    user_col.insert_one(user)
+    user_col.insert_one(user.dict())
     return user.user_id
 
 @app.get("/start_read/")
