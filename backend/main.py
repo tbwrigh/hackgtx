@@ -224,3 +224,8 @@ def get_books() -> List[Book]:
 def get_book(genre: str) -> List[Book]:
     books = list(book_col.find({"genre": genre}))
     return books
+
+@app.get("/get_genres/")
+def get_genres() -> List[str]:
+    genres = list(book_col.distinct("genre"))
+    return genres
