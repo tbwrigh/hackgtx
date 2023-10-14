@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import FastAPI, Form, File, UploadFile
+from fastapi import FastAPI, Form, File
 
 import dotenv
 import os
@@ -43,18 +43,18 @@ def login(username: Annotated[str, Form()], password: Annotated[str, Form()]):
         return False
 
 @app.post("/upload_book/")
-def upload_book(info: BookUpload):
-    user = user_db['users'].find_one({"user_id": info.user_id})
+def upload_book(title: Annotated[str, Form()], author: Annotated[str, Form()], description: Annotated[str, Form()], genre: Annotated[str, Form()], user_id: Annotated[str, Form()], cover_bytes: Annotated[bytes, File()], text_bytes: Annotated[bytes, File()]):
+    user = user_db['users'].find_one({"user_id": user_id})
     if user.admin:
         # write cover bytes to file
-        book = Book(title=info.title, author=info.author, description=info.description, genre=info.genre)
+        book = Book(title=title, author=author, description=description, genre=genre)
 
         with open(f"{IMAGES_FOLDER}/{book.book_id}.jpg", "wb") as f:
-            f.write(info.cover_bytes)
+            f.write(cover_bytes)
         
         # write text bytes to file
         with open(f"{TEXT_FOLDER}/{book.book_id}.txt", "wb") as f:
-            f.write(info.text_bytes)
+            f.write(text_bytes)
 
         book_db['books'].insert_one(book)
         return True
