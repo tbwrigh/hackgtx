@@ -17,8 +17,8 @@ head {
 </style>
 </head>
 <body>
-    <h1>Item ID: {{ id }}</h1>
-    <head>Continue</head>
-    <head>Explore</head>
+    {% for book in books %}
+        <img src="http://127.0.0.1:8001/get_book_image/{{ book['book_id'] }}">
+    {% endfor %}
 </body>
 </html>
