@@ -60,3 +60,8 @@ def upload_book(title: Annotated[str, Form()], author: Annotated[str, Form()], d
         return True
     else:
         return False
+
+@app.post("/signup/")
+def signup(email: Annotated[str, Form()], username: Annotated[str, Form()], password: Annotated[str, Form()]):
+    info = user_db.get({"email": email, "username": username, "password": password})
+    return info
