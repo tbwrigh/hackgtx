@@ -15,5 +15,9 @@ mongo_url = os.getenv("MONGO_URL")
 
 client = MongoClient(mongo_url)
 
+user_db = client.users
+
+
+
 app = FastAPI()
 
