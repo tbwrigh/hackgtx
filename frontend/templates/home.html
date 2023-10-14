@@ -9,22 +9,43 @@ body {
     font-family: 'Inter', sans-serif;
     background-color: #E8EDEC;
 }
-h2 {
-    color: #9730DB;
-    font-size: 160%;
-    font-weight: bold;
+div.topbar{
+    background-color: #333;
+    width: 100%;
+    height: 50px;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: -1;
 }
+h2.type {
+    color: #9730DB;
+    font-size: 25px;
+    font-weight: bold;
+    z-index: 1;
+}
+img.size {
+    border-radius: 15px;
+    width: 10%;
+    height: 10%;
+    margin: 2px;
+}
+
 </style>
 </head>
 <body>
+    <div class="topbar"></div>
+    <h2 class="type">All Books</h2>
     {% for book in books %}
-        <img src="http://127.0.0.1:8001/get_book_image/{{ book['book_id'] }}">
+        <img src="http://127.0.0.1:8001/get_book_image/{{ book['book_id'] }}" img class="size">
     {% endfor %}
+    <!-- <h2>test</h2> -->
+
     {% for genre in genres %}
-    <h2>{{ genre }}</h2>
+    <h2 class="type">{{ genre }}</h2>
         {% for book in books %}
-            {% if book[genre] == genre %}
-                <img src="http://127.0.0.1:8001/get_book_image/{{ book['genre'] }}">
+            {% if book['genre'] == genre %}
+                <img src="http://127.0.0.1:8001/get_book_image/{{ book['book_id'] }}" img class="size">
             {% endif %}
         {% endfor %}
     {% endfor %}
