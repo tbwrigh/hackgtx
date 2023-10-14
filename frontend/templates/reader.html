@@ -1,0 +1,32 @@
+<button onclick="prev()">Prev.</button>
+
+<img src="http://127.0.0.1:8001/get_section_image/{{ section_id }}" alt="" id="image">
+
+<p id="text">{{ book_text }}</p>
+
+<button onclick="next()">Next</button>
+
+<script>
+    function next() {
+        let id = document.getElementById("image").src.split("/").pop();
+        fetch("http://127.0.0.1:8000/next_section/" + id)
+            .then((response) => response.json())
+            .then((json) => {
+                document.getElementById("image").src = "http://127.0.0.1:8001/get_section_image/" + json.section_id;
+                document.getElementById("text").innerHTML = json.book_text;
+                console.log("complete");
+            });
+    }
+
+    function prev() {
+        let id = document.getElementById("image").src.split("/").pop();
+        fetch("http://127.0.0.1:8000/prev_section/" + id)
+            .then((response) => response.json())
+            .then((json) => {
+                document.getElementById("image").src = "http://127.0.0.1:8001/get_section_image/" + json.section_id;
+                document.getElementById("text").innerHTML = json.book_text;
+                console.log("complete");
+            });
+    }
+
+</script>

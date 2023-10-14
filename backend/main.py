@@ -1,6 +1,7 @@
-from typing import Annotated, List
+from typing import Annotated, List, Optional
 from fastapi import FastAPI, Form, File, UploadFile
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 import dotenv
 import os
@@ -12,6 +13,8 @@ from models import User, Book, Section, Current
 from PIL import Image
 import io
 import requests
+
+import asyncio
 
 
 dotenv.load_dotenv()
@@ -72,7 +75,39 @@ def genArt(text_chunk:str) -> bytes:
     r = requests.get(img_url, allow_redirects = True)
     return r.content
 
+async def generate_section(book_id: str, user_id: str):
+    t_client = MongoClient(os.getenv("MONGO_URL"))
+    t_db = t_client['main']
+    t_section_col = t_db['sections']
+
+    sections = t_section_col.find({"book_id": book_id})
+    latest_section = sections[0]
+    for s in sections:
+        if s['start'] > latest_section['start']:
+            latest_section = s
+    new_start = latest_section['end']+1
+    with open(f"{TEXT_FOLDER}/{book_id}.txt", "r") as f:
+        text = f.read()
+    section_text = gptNaturalSplit(text[new_start:new_start+1800], 60)[0]
+
+    section = Section(book_id=book_id, user_id=user_id, start=new_start, end=new_start+len(section_text))
+    t_section_col.insert_one(section.dict())
+
+    print("start art")
+
+    image_data = genArt(section_text)
+    image_stream = io.BytesIO(image_data)
+    image = Image.open(image_stream)
+    image.save(f"{IMAGES_FOLDER}/{section.section_id}.jpg",  optimize=True, quality=10)
+
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_headers=["*"],
+)
 
 @app.get("/section/{section_id}")
 def get_section(section_id: str) -> Section:
@@ -159,7 +194,7 @@ def start_read(book_id: str = Form(...), user_id: str = Form(...)) -> Section:
     current = Current(user_id=user_id, book_id=book_id, section_id=sections[0].section_id)
     currentread_col.insert_one(current.dict())
 
-    return sections[0]
+    return RedirectResponse(url=f"/last_read_section/book/{book_id}/user/{user_id}")
 
 @app.get("/section_text/{section_id}")
 def get_section_text(section_id: str) -> str:
@@ -183,28 +218,16 @@ def next_section(section_id: str) -> Section:
     next_section = section_col.find_one({"book_id": section['book_id'], "start": section['end']})
 
     # attempt to generate art for another section
-
-    sections = section_col.find({"book_id": section['book_id']})
-    latest_section = sections[0]
-    for s in sections:
-        if s['start'] > latest_section['start']:
-            latest_section = s
-    new_start = latest_section['end']+1
-    with open(f"{TEXT_FOLDER}/{section['book_id']}.txt", "r") as f:
-        text = f.read()
-    section_text = gptNaturalSplit(text[new_start:new_start+1800], 60)[0]
-
-    section = Section(book_id=next_section['book_id'], user_id=next_section['user_id'], start=new_start, end=new_start+len(section_text))
-    section_col.insert_one(section.dict())
-
-    print("start art")
-
-    image_data = genArt(section_text)
-    image_stream = io.BytesIO(image_data)
-    image = Image.open(image_stream)
-    image.save(f"{IMAGES_FOLDER}/{section.section_id}.jpg",  optimize=True, quality=10)
+    asyncio.run(generate_section(next_section['book_id'], next_section['user_id']))
 
     return next_section
+
+@app.get("/prev_section/{section_id}")
+def prev_section(section_id: str) -> Section:
+    section = section_col.find_one({"section_id": section_id})
+    prev_section = section_col.find_one({"book_id": section['book_id'], "end": section['start']})
+
+    return prev_section
 
 @app.get("/get_section_image/{section_id}")
 def get_section_image(section_id: str) -> bytes:
@@ -229,3 +252,11 @@ def get_book(genre: str) -> List[Book]:
 def get_genres() -> List[str]:
     genres = list(book_col.distinct("genre"))
     return genres
+
+@app.get("/last_read_section/book/{book_id}/user/{user_id}")
+def get_last_read(book_id: str, user_id: str) -> Optional[Section]:
+    current = currentread_col.find_one({"book_id": book_id, "user_id": user_id})
+    if current == None:
+        return RedirectResponse(url="/start_read?book_id={book_id}&user_id={user_id}")
+    section = section_col.find_one({"section_id": current['section_id']})
+    return section
