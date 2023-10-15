@@ -58,14 +58,17 @@ def genArt(text, name):
         r = requests.get(img_url, allow_redirects = True)
         # save file to name
         open(f"{IMAGES_FOLDER}/{name}.png", "wb").write(r.content)
+        return 0
     except:
-        return
+        return -1
 
 def process_text(text, name):
     paragraphs = preprocess_text(text)
 
+    delta = 0
+
     for i in range(len(paragraphs)):
-        genArt(paragraphs[i], f"{name}-{i}")
+        delta += genArt(paragraphs[i], f"{name}-{i+delta}")
     
 from pymongo import MongoClient
 
@@ -157,13 +160,15 @@ def upload_easy(gutenburg_url: str = Form(...)):
     page_text = page.text
     page_lines = page_text.split("\n")
 
+    none_available = "No author available."
+
     author = "No author available."
     title = "No title available."
 
     next_line = False
 
     for line in page_lines:
-        if "itemprop=\"creator\">" in line:
+        if "itemprop=\"creator\">" in line and author == none_available:
             author = line.split(">")[1].split("<")[0]
         if "itemprop=\"headline\">" in line:
             next_line = True
