@@ -65,7 +65,7 @@ i.right {
     <h2 class="type down">Books</h2>
     {% for book in books %}
 
-        <img src="/covers/{{ book['book_id'] }}.jpg" img class="size">
+        <a href="/book/{{book['book_id']}}"><img src="/covers/{{ book['book_id'] }}.jpg" img class="size"></a>
         <h1>{{book['title']}} By {{book['author']}}</h1>
 
     {% endfor %}
