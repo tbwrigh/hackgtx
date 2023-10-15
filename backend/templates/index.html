@@ -8,6 +8,7 @@
 body {
     font-family: 'Inter', sans-serif;
     background-color: #E8EDEC;
+    overflow-x: hidden;
 }
 
 .topbar {
@@ -58,6 +59,15 @@ img.size {
     top: 60px;
 }
 
+.btn {
+    /* width: 25px; */
+    /* height: 25px; */
+    position: absolute;
+    top: 12px;
+    right: 1%;
+}
+
+
 /* .front {
     z-index: 1;
 }
@@ -80,6 +90,7 @@ i.right {
 </head>
 <body>
     <h2 class="heading topbar">Books</h2>
+    <button type="submit" class="btn">Upload</button>
     {% for book in books %}
         <a href="/book/{{book['book_id']}}"><img src="/covers/{{ book['book_id'] }}.jpg" img class="size"></a>
     {% endfor %}
