@@ -9,8 +9,8 @@
     </head>
     <body>
         <div width="100vw" height="100vh">
-            <h1><a href="/">&larr;</a><center><span>{{ book['title'] }} by {{ book['author'] }}</span></center></h1>
-            <center>
+            <h1><a href="/">&larr;</a><span>{{ book['title'] }} by {{ book['author'] }}</span></h1>
+            
         <img id="bigImage" src="/images/{{ book['book_id'] }}-0.png" height="850vh">
 
         <br>
@@ -19,7 +19,7 @@
             <img id="smallImage{{ i }}" class="smallImage" src="/images/{{ book['book_id'] }}-{{ i }}.png" alt="image" width="4.5%">
         {% endfor %}
 
-            </center>
+            
         </div>
 
         <script>
