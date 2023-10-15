@@ -90,7 +90,7 @@ i.right {
 </head>
 <body>
     <h2 class="heading topbar">Books</h2>
-    <button type="submit" class="btn">Upload</button>
+    <a href="/upload_easy"><button type="submit" class="btn">Upload</button></a>
     {% for book in books %}
         <a href="/book/{{book['book_id']}}"><img src="/covers/{{ book['book_id'] }}.jpg" img class="size"></a>
     {% endfor %}
