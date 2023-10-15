@@ -58,14 +58,17 @@ def genArt(text, name):
         r = requests.get(img_url, allow_redirects = True)
         # save file to name
         open(f"{IMAGES_FOLDER}/{name}.png", "wb").write(r.content)
+        return 0
     except:
-        return
+        return -1
 
 def process_text(text, name):
     paragraphs = preprocess_text(text)
 
+    delta = 0
+
     for i in range(len(paragraphs)):
-        genArt(paragraphs[i], f"{name}-{i}")
+        delta += genArt(paragraphs[i], f"{name}-{i+delta}")
     
 from pymongo import MongoClient
 
