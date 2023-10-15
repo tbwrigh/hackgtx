@@ -21,9 +21,6 @@ for line in page_lines:
         title = line
         next_line = False
 
-description = "No description available."
-genre = "No genre available."
-
 # extract number
 book_id = gutenburg_url.split("/")[-1]
 
@@ -38,19 +35,16 @@ text_url = f"https://www.gutenberg.org/ebooks/{book_id}.txt.utf-8"
 text_bytes = requests.get(text_url).content
 
 # send to backend
-backend_url = "http://localhost:8001/upload_book/"
+backend_url = "http://localhost:8000/upload/"
 
 data = {
     "title": title,
     "author": author,
-    "description": description,
-    "genre": genre,
-    "user_id": "admin-ftyujbvfdertyuiohgfrert",
 }
 
 files = {
-    "cover_bytes": cover_bytes,
-    "text_bytes": text_bytes,
+    "cover": cover_bytes,
+    "text": text_bytes,
 }
 
 r = requests.post(backend_url, data=data, files=files, allow_redirects=True)
