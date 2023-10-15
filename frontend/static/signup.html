@@ -1,117 +1,131 @@
 <!DOCTYPE html>
-
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Sign Up</title>
-    <link rel="stylesheet" href="css/signup.css">
-    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://rsms.me/inter/inter.css">
 <style>
 body {
     font-family: 'Inter', sans-serif;
     background-color: #E8EDEC;
 }
 
-p.username {
-    color: black;
-    position: absolute;
-    top: 9.5vw;
-    left: 33vw;
-    font-size: 160%;
-    font-weight: bold;
-    z-index: 1;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Inter", sans-serif;
 }
 
-p.email {
-    color: black;
-    position: absolute;
-    top: 17.5vw;
-    left: 33vw;
-    font-size: 160%;
-    font-weight: bold;
-    z-index: 1;
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #E8EDEC;
 }
 
-p.password {
-    color: black;
-    position: absolute;
-    top: 25.5vw;
-    left: 33vw;
-    font-size: 160%;
-    font-weight: bold;
-    z-index: 1;
+.wrapper {
+    width: 440px;
+    border-radius: 25px;
+    background: #D9D9D9;
+    color: #FFF;
+    padding: 10px 40px;
 }
 
-.rcorners1 {
-  border-radius: 25px;
-  background: #D9D9D9;
-  padding: 12vw;
-  width: 16vw;
-  height: 8vw;
-  position: relative;
-  left: 375px;
-  top: 100px;
-  z-index: -1;
+.wrapper .input-box {
+    width: 100%;
+    height: 40px;
+    margin: 10px 0;
 }
 
-.style {
-    border-radius: 15px;
-    position: absolute;
-    width: 33%;
-    height: 3vw;
-    top: 15vw;
-    left: 15%;
+.input-box input {
+    width: 100%;
+    height: 80%;
     border: none;
+    outline: none;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 40px;
 }
 
-.move1 {
-    top: 180px;
-    left: 420px;
+.input-box input::placeholder {
+    color: #fff;
 }
 
-.move2 {
-    top: 280px;
-    left: 420px;
-}
-
-.move3 {
-    top: 380px;
-    left: 420px;
-}
-
-.coloredbutton {
-    background-color: #9730DB;
-    border-radius: 15px;
-    width: 180px;
-    font-size: 140%;
+.input-box i {
     position: absolute;
-    left: 540px;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%)
+}
+
+.name {
+    color: black;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.name1 {
+    color: black;
+}
+
+.wrapper .btn {
+    width: 100%;
+    height: 45px;
+    background: #9730DB;
     border: none;
+    outline: none;
+    border-radius: 40px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    font-size: 16px;
+    color: white;
+    font-weight: 600;
 }
 
-.moveline {
-    position: absolute;
-    left: 510px;
-    top: 470px;
+.wrapper .register-link {
+    font-size: 14.5px;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.register-link p a {
+    color: #9730DB;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.register-link p a:hover {
+    text-decoration: underline;
 }
 
 </style>
 </head>
 <body>
-    <div class="container">
-        <div class="signup">
-            <!-- <h1 class="center">Sign Up</h1> -->
-            <form action="http://127.0.0.1:8001/signup/" method="post">
-                <h2 class="rcorners1"></h2>
-                <p class="username">Username:</p>
-                <input type="text" class="style move1" name="username" placeholder="Username" required>
-                <p class="email">Email:</p>
-                <input type="email" class="style move2" name="email" placeholder="Email" required>
-                <p class="password">Password:</p>
-                <input type="password" class="style move3" name="password" placeholder="Password" required>
-                <input type="submit" class="coloredbutton" value="Sign Up">
-            </form>
-            <p class="moveline">Already have an account? <a href="/static/login.html">Log In</a></p>
-        </div>
+    <div class="wrapper">
+        <form action="">
+            <h1 class="name">Email:</h1>
+            <div class="input-box">
+                <input type="text" placeholder="Email" required>
+            </div>
+            <h1 class="name">Username:</h1>
+            <div class="input-box">
+                <input type="text" placeholder="Username" required>
+            </div>
+            <h1 class="name">Password:</h1>
+            <div class="input-box">
+                <input type="password"
+                placeholder="Password" required>
+            </div>
+
+            <button type="submit" class="btn">Sign Up</button>
+
+            <div class="register-link">
+                <p class="name1">Already have an account?<a href="/static/login.html"> Log In</a></p>
+            </div>
+        </form>
     </div>
+
 </body>
+</html>
