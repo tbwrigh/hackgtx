@@ -4,3 +4,4 @@ venv/
 images/
 text/
 docker.env
+covers/
