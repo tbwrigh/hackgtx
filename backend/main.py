@@ -129,12 +129,8 @@ def root(request: Request):
             "num_images": num_images
         })
 
-        titles = [book['title'] for book in book_data]
-        authors = [book['author'] for book in book_data]
-        books = [book['book_id'] for book in book_data]
 
-
-    return templates.TemplateResponse("index.html", {"request": request, "titles": titles, "authors": authors, "books": books})
+    return templates.TemplateResponse("index.html", {"request": request, "books": book_data})
 
 @app.get("/book/{book_id}")
 def book(request: Request, book_id: str):
