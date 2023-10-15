@@ -70,7 +70,8 @@ i.right {
     {% for book in books %}
 
         <img src="/covers/{{ book['book_id'] }}.jpg" img class="size">
-        <h1>{{book['title']}} By {{book['author']}}</h1>
+        <h1>{{book['title']}}</h1>
+        <h2>{{book['author']}}</h2>
 
     {% endfor %}
     
