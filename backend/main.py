@@ -111,4 +111,8 @@ def upload(text: UploadFile, cover: UploadFile, title: str = Form(...), author: 
 
 @app.get("/")
 def root(request: Request):
+
+    for book in book_col.find():
+        print(book)
+
     return templates.TemplateResponse("index.html", {"request": request})
