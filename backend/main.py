@@ -45,18 +45,21 @@ def preprocess_text(text):
     return true_paragraphs
 
 def genArt(text, name):
-    reply = co.summarize(text = text, additional_command="Extract all the meaningful descriptions of the scene set by the paragraph.", length="medium", extractiveness="high")
-    reply=reply.summary
-    reply = reply[:900]
-    response = openai.Image.create(
-        prompt = "In an water color realism style depict the scene described by the following: " + reply, 
-        n = 1,
-        size = "1024x1024",
-    )
-    img_url = response['data'][0]['url']
-    r = requests.get(img_url, allow_redirects = True)
-    # save file to name
-    open(f"{IMAGES_FOLDER}/{name}.png", "wb").write(r.content)
+    try:
+        reply = co.summarize(text = text, additional_command="Extract all the meaningful descriptions of the scene set by the paragraph.", length="medium", extractiveness="high")
+        reply=reply.summary
+        reply = reply[:900]
+        response = openai.Image.create(
+            prompt = "In an water color realism style depict the scene described by the following: " + reply, 
+            n = 1,
+            size = "1024x1024",
+        )
+        img_url = response['data'][0]['url']
+        r = requests.get(img_url, allow_redirects = True)
+        # save file to name
+        open(f"{IMAGES_FOLDER}/{name}.png", "wb").write(r.content)
+    except:
+        return
 
 def process_text(text, name):
     paragraphs = preprocess_text(text)
@@ -75,6 +78,7 @@ book_col = db['books']
 from fastapi import FastAPI, UploadFile, Form, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import RedirectResponse
 
 app = FastAPI()
 
@@ -139,3 +143,64 @@ def book(request: Request, book_id: str):
     num_images = len([name for name in os.listdir(IMAGES_FOLDER) if book['book_id'] in name])
 
     return templates.TemplateResponse("book.html", {"request": request, "book": book, "num_images": num_images})
+
+import requests
+
+@app.post("/upload_easy/")
+def upload_easy(gutenburg_url: str = Form(...)):
+    # if url is not in form of https://www.gutenberg.org/ebooks/number
+    if not (gutenburg_url.startswith("https://www.gutenberg.org/ebooks/") or gutenburg_url.startswith("http://www.gutenberg.org/ebooks/")):
+        return RedirectResponse(url="/", status_code=303)
+
+    # extract author and title
+    page = requests.get(gutenburg_url)
+    page_text = page.text
+    page_lines = page_text.split("\n")
+
+    author = "No author available."
+    title = "No title available."
+
+    next_line = False
+
+    for line in page_lines:
+        if "itemprop=\"creator\">" in line:
+            author = line.split(">")[1].split("<")[0]
+        if "itemprop=\"headline\">" in line:
+            next_line = True
+        elif next_line:
+            title = line
+            next_line = False
+
+    # extract number
+    book_id = gutenburg_url.split("/")[-1]
+
+    print(book_id)
+
+    # get the cover
+    cover_url = f"https://www.gutenberg.org/cache/epub/{book_id}/pg{book_id}.cover.medium.jpg"
+    cover_bytes = requests.get(cover_url).content
+
+    # get the text
+    text_url = f"https://www.gutenberg.org/ebooks/{book_id}.txt.utf-8"
+    text_bytes = requests.get(text_url).content
+
+    # send to backend
+    backend_url = "http://127.0.0.1:8000/upload/"
+
+    data = {
+        "title": title,
+        "author": author,
+    }
+
+    files = {
+        "cover": cover_bytes,
+        "text": text_bytes,
+    }
+
+    requests.post(backend_url, data=data, files=files, allow_redirects=True)
+
+    return RedirectResponse(url="/", status_code=303)
+
+@app.get("/upload_easy/")
+def upload_easy_get(request: Request):
+    return templates.TemplateResponse("upload_easy.html", {"request": request})
