@@ -160,13 +160,15 @@ def upload_easy(gutenburg_url: str = Form(...)):
     page_text = page.text
     page_lines = page_text.split("\n")
 
+    none_available = "No author available."
+
     author = "No author available."
     title = "No title available."
 
     next_line = False
 
     for line in page_lines:
-        if "itemprop=\"creator\">" in line:
+        if "itemprop=\"creator\">" in line and author == none_available:
             author = line.split(">")[1].split("<")[0]
         if "itemprop=\"headline\">" in line:
             next_line = True
