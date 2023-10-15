@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html>
+    <head></head>
+    <body>
+        {% for i in range(num_images) %}
+            <img src="/images/{{ book['book_id'] }}-{{ i }}.png" alt="image" width="100" height="100">
+        {% endfor %}
+    </body>
+</html>

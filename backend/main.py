@@ -74,8 +74,12 @@ book_col = db['books']
 
 from fastapi import FastAPI, UploadFile, Form, Request
 from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
+
+app.mount("/images", StaticFiles(directory="images"), name="images")
+app.mount("/covers", StaticFiles(directory="covers"), name="covers")
 
 templates = Jinja2Templates(directory="templates")
 
@@ -112,7 +116,30 @@ def upload(text: UploadFile, cover: UploadFile, title: str = Form(...), author: 
 @app.get("/")
 def root(request: Request):
 
-    for book in book_col.find():
-        print(book)
+    book_data = []
 
-    return templates.TemplateResponse("index.html", {"request": request})
+    for book in book_col.find():
+        # find num images in images folder based on they are prefixed with book_id
+        num_images = len([name for name in os.listdir(IMAGES_FOLDER) if book['book_id'] in name])
+
+        book_data.append({
+            "book_id": book['book_id'],
+            "title": book['title'],
+            "author": book['author'],
+            "num_images": num_images
+        })
+
+        titles = [book['title'] for book in book_data]
+        authors = [book['author'] for book in book_data]
+        books = [book['book_id'] for book in book_data]
+
+
+    return templates.TemplateResponse("index.html", {"request": request, "titles": titles, "authors": authors, "books": books})
+
+@app.get("/book/{book_id}")
+def book(request: Request, book_id: str):
+    book = book_col.find_one({"book_id": book_id})
+
+    num_images = len([name for name in os.listdir(IMAGES_FOLDER) if book['book_id'] in name])
+
+    return templates.TemplateResponse("book.html", {"request": request, "book": book, "num_images": num_images})
