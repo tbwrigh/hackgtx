@@ -2,7 +2,6 @@
 <html>
 <head>
 <title>Item Details</title>
-<link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
 <style>
@@ -63,9 +62,6 @@ i.right {
 </style>
 </head>
 <body>
-    <div class="topbar"></div>
-    <!-- <i class="glyphicon glyphicon-user"></i> -->
-    <i class="glyphicon glyphicon-home"></i>
     <h2 class="type down">Books</h2>
     {% for book in books %}
 
